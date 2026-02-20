@@ -6,7 +6,6 @@ import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
-import net.runelite.client.ui.overlay.components.TextComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 import net.runelite.client.ui.overlay.tooltip.Tooltip;
@@ -59,7 +58,6 @@ public class NowPlayingOverlay extends OverlayPanel {
                     songToolTip.getChildren().clear();
                     songToolTip.getChildren().add(LineComponent.builder()
                             .left("Composer:").right("Ian Taylor")
-                            .left("Released:").right(info.)
                             .build());
 
                     toolTipManager.add(this.songToolTip);

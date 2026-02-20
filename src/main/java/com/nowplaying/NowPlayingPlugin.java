@@ -90,24 +90,17 @@ public class NowPlayingPlugin extends Plugin
 		}
 
 		if (config.fetch()) {
-			fetchWikiData(text);
+			if (songInfoCache.containsKey(text)) {
+				this.lastSongInfo = songInfoCache.get(text);
+			} else {
+				String cleanSongName = text.replaceAll(" ", "_");
+				fetchWikiData(cleanSongName);
+			}
 		}
-
 		log.debug(text);
 	}
 
-	private void updateSongInfoCache(String songName, NowPlayingTrackInfo songInfo) {
-		songInfoCache.put(songName, songInfo);
-		this.lastSongInfo = songInfo;
-	}
-
 	private void fetchWikiData(String songName) {
-		String cleanSongName = songName.replaceAll(" ", "_");
-
-		if (songInfoCache.containsKey(cleanSongName)) {
-
-		}
-
 		HttpUrl url = new HttpUrl.Builder()
 				.scheme("https")
 				.host("oldschool.runescape.wiki")
@@ -115,7 +108,7 @@ public class NowPlayingPlugin extends Plugin
 				.addQueryParameter("action", "parse")
 				.addQueryParameter("format", "json")
 				.addQueryParameter("prop", "wikitext")
-				.addQueryParameter("page", cleanSongName)
+				.addQueryParameter("page", songName)
 				.build();
 
 		Request request = new Request.Builder().header("User-Agent", "Runelite / Now Playing! / @peachflavour").url(url).build();
@@ -123,7 +116,7 @@ public class NowPlayingPlugin extends Plugin
 		okHttpClient.newCall(request).enqueue(new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
-				log.warn("Failed to retrieve song data from the wiki {}", cleanSongName);
+				log.warn("Failed to retrieve song data from the wiki {}", songName);
 			}
 
 			@Override
@@ -131,9 +124,10 @@ public class NowPlayingPlugin extends Plugin
                 try (response) {
 					if (!(response.body() == null)) {
 						String body = response.body().string();
-						NowPlayingTrackInfo trackInfo = NowPlayingTrackInfo.fromWikiPayload(body);
+						NowPlayingTrackInfo songInfo = NowPlayingTrackInfo.fromWikiPayload(body);
 
-						updateSongInfoCache(cleanSongName, trackInfo);
+						songInfoCache.put(songName, songInfo);
+						lastSongInfo = songInfo;
 					}
                 } catch (NullPointerException e) {
                     log.warn(e.toString());
@@ -155,12 +149,4 @@ public class NowPlayingPlugin extends Plugin
 	{
 		return configManager.getConfig(NowPlayingConfig.class);
 	}
-
-	private void iterRequests(List<MidiRequest> requests, Function<MidiRequest, Object> f) {
-		for (MidiRequest request : requests) {
-			f.apply(request);
-		}
-
-	}
-
 }
