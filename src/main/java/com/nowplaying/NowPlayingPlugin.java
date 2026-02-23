@@ -127,6 +127,8 @@ public class NowPlayingPlugin extends Plugin
 						NowPlayingTrackInfo songInfo = NowPlayingTrackInfo.fromWikiPayload(body);
 
 						songInfoCache.put(songName, songInfo);
+						log.debug("Added 1 new song to the cache");
+						log.debug("Cache state = {} songs cached", songInfoCache.size());
 						lastSongInfo = songInfo;
 					}
                 } catch (NullPointerException e) {

@@ -55,9 +55,17 @@ public class NowPlayingOverlay extends OverlayPanel {
                 Point mousePosition = client.getMouseCanvasPosition();
                 if (this.getBounds().contains(mousePosition.getX(), mousePosition.getY())) {
                     final PanelComponent songToolTip = (PanelComponent) this.songToolTip.getComponent();
+
                     songToolTip.getChildren().clear();
+
                     songToolTip.getChildren().add(LineComponent.builder()
-                            .left("Composer:").right("Ian Taylor")
+                            .left("Composer:").right(info.getComposer())
+                            .build());
+                    songToolTip.getChildren().add(LineComponent.builder()
+                            .left("Release Date:").right(info.getReleaseDate())
+                            .build());
+                    songToolTip.getChildren().add(LineComponent.builder()
+                            .left("Unlock Location:").right(info.getUnlockLocation())
                             .build());
 
                     toolTipManager.add(this.songToolTip);
